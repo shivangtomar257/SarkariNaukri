@@ -1,0 +1,14 @@
+{
+  "name": "SarkariNaukri — Government Jobs",
+  "short_name": "SarkariNaukri",
+  "description": "Verified government jobs, deadlines, admit cards, results and exam calendar.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#071a2f",
+  "icons": [
+    {"src":"/static/portal/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"/static/portal/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}

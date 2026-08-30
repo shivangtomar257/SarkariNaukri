@@ -1,0 +1,3 @@
+{% extends 'portal/base.html' %}
+{% block title %}Staff verification — SarkariNaukri{% endblock %}
+{% block content %}<section class="auth-section"><div class="auth-card"><h1>Staff two-factor verification</h1><p>Enter the current six-digit code from the authenticator configured for this deployment.</p>{% if error %}<div class="message error">{{error}}</div>{% endif %}<form method="post">{% csrf_token %}<input type="hidden" name="next" value="{{next}}"><label class="form-field"><span>Authenticator code</span><input name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required></label><button class="btn btn-primary full">Verify</button></form></div></section>{% endblock %}

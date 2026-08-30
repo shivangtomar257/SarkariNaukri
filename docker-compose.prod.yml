@@ -1,0 +1,57 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80","443:443"]
+    environment: ["DOMAIN=${DOMAIN}"]
+    volumes: ["./Caddyfile:/etc/caddy/Caddyfile:ro","caddy_data:/data","caddy_config:/config"]
+    depends_on: [web]
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sarkari}
+      POSTGRES_USER: ${POSTGRES_USER:-sarkari}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sarkari} -d ${POSTGRES_DB:-sarkari}"], interval: 5s, timeout: 5s, retries: 20}
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server","--appendonly","yes"]
+    volumes: ["redisdata:/data"]
+  web:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      RUN_MIGRATIONS: "1"
+    expose: ["8000"]
+    depends_on: {db: {condition: service_healthy}, redis: {condition: service_started}}
+    healthcheck: {test: ["CMD","curl","-f","http://localhost:8000/healthz/"], interval: 30s, timeout: 5s, retries: 5}
+  worker:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      RUN_MIGRATIONS: "0"
+    command: ["celery","-A","sarkarinaukri","worker","-l","INFO","--concurrency=4"]
+    depends_on: [db,redis]
+  beat:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      RUN_MIGRATIONS: "0"
+    command: ["celery","-A","sarkarinaukri","beat","-l","INFO"]
+    depends_on: [db,redis]
+  backup:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes: ["backups:/backups"]
+    entrypoint: ["/bin/sh","-c"]
+    command: ["while true; do /app/scripts/backup.sh; sleep 86400; done"]
+    depends_on: [db]
+volumes: {pgdata: {}, redisdata: {}, caddy_data: {}, caddy_config: {}, backups: {}}

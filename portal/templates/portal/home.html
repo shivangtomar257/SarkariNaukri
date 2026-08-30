@@ -1,0 +1,78 @@
+{% extends 'portal/base.html' %}
+{% block title %}SarkariNaukri — Latest Government Jobs, Admit Cards & Results{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">✓ Official-source verification • Automated updates • Deadline-first</div>
+      <h1>{{T.hero_title}}</h1>
+      <p>{{T.hero_subtitle}}</p>
+      <form class="searchbar" action="{% url 'jobs' %}" role="search" data-autocomplete-form>
+        <div class="searchfield autocomplete-wrap">⌕ <input name="q" autocomplete="off" data-autocomplete placeholder="{{T.search_placeholder}}"><div class="autocomplete-list" data-autocomplete-list hidden></div></div>
+        <div class="searchfield">🎓 <select name="qualification"><option value="">{{T.any_qualification}}</option>{% for q in QUALIFICATIONS %}<option>{{q}}</option>{% endfor %}</select></div>
+        <button class="btn btn-primary">{{T.find_jobs}} →</button>
+      </form>
+      <div class="hero-tags">{% for item in QUALIFICATION_LINKS %}<a href="{% url 'qualification-jobs' item.slug %}">{{item.name}}</a>{% endfor %}</div>
+    </div>
+    <aside class="hero-side">
+      <div class="sidehead"><h3>Autopilot status</h3><span class="live">Live pipeline</span></div>
+      <div class="glance-grid">
+        <div class="glance"><strong>{{job_count}}</strong><span>Published jobs</span></div>
+        <div class="glance"><strong>{{admits|length}}</strong><span>Recent admit cards</span></div>
+        <div class="glance"><strong>{{results|length}}</strong><span>Recent results</span></div>
+        <div class="glance"><strong>24/7</strong><span>Scheduled monitoring</span></div>
+      </div>
+      <div class="verified-note">🛡️ High-confidence official records auto-publish. Conflicts and uncertain extraction are held for review.</div>
+      {% if request.user.is_authenticated and VAPID_PUBLIC_KEY %}<button class="btn btn-white push-enable" id="enable-push" type="button">Enable browser alerts</button>{% endif %}
+    </aside>
+  </div>
+</section>
+
+<div class="container quickwrap">
+  <div class="quickgrid five">
+    <a class="quickcard" href="{% url 'jobs' %}"><div class="qicon">⚡</div><div><h3>{{T.latest_jobs}}</h3><p>Fresh verified notifications</p></div></a>
+    <a class="quickcard" href="{% url 'jobs' %}?closing=1"><div class="qicon">⏳</div><div><h3>{{T.closing_soon}}</h3><p>Nearest application deadlines</p></div></a>
+    <a class="quickcard" href="{% url 'admit-cards' %}"><div class="qicon">🎫</div><div><h3>{{T.admit_cards}}</h3><p>Official hall-ticket updates</p></div></a>
+    <a class="quickcard" href="{% url 'results' %}"><div class="qicon">🏆</div><div><h3>{{T.results}}</h3><p>Verified result notices</p></div></a>
+    <a class="quickcard" href="{% url 'exam-calendar' %}"><div class="qicon">📅</div><div><h3>{{T.exam_calendar}}</h3><p>Deadlines & exam dates</p></div></a>
+  </div>
+</div>
+
+{% if recommended %}
+<section class="section compact personalized-section"><div class="container">
+  <div class="section-head"><div><span class="section-kicker">Personalized</span><h2>{{T.recommended}}</h2><p>Based on your saved education, sector and state preferences.</p></div><a class="link" href="{% url 'profile' %}">Edit preferences →</a></div>
+  <div class="card-grid">{% for j in recommended %}
+    <article class="mini-job-card"><div class="mini-card-top"><span class="source-pill">{{T.verified}}</span>{% if j.is_closing_soon %}<span class="badge orange">Closing soon</span>{% endif %}</div><h3><a href="{{j.get_absolute_url}}">{{j.title}}</a></h3><p>{{j.organization}}</p><div class="mini-stats"><span>🎓 {{j.qualification_group|default:'See notice'}}</span><span>📍 {{j.state|default:'All India'}}</span></div><div class="mini-deadline"><span>{{T.last_date}}</span><strong>{{j.application_end_date|date:'d M Y'|default:'See notice'}}</strong></div></article>
+  {% endfor %}</div>
+</div></section>
+{% endif %}
+
+<section class="section"><div class="container">
+  <div class="section-head"><div><h2>Browse by qualification</h2><p>See recruitment grouped by your educational level.</p></div><a class="link" href="{% url 'jobs' %}">{{T.all_jobs}} →</a></div>
+  <div class="qualgrid">{% for item in QUALIFICATION_LINKS %}<a class="qualcard" href="{% url 'qualification-jobs' item.slug %}"><span class="count">{{item.name}}</span><div class="qualicon">🎓</div><h3>{{item.name}} Jobs</h3><p>Verified recruitment grouped from official notices.</p></a>{% endfor %}<a class="qualcard" href="{% url 'jobs' %}"><span class="count">ALL</span><div class="qualicon">✨</div><h3>All Qualifications</h3><p>Browse every active notification.</p></a></div>
+</div></section>
+
+<section class="section compact browse-taxonomy"><div class="container"><div class="taxonomy-grid"><div class="taxonomy-card"><div class="section-head small"><div><h2>Browse by sector</h2><p>Railway, Banking, Defence, SSC, Education and more.</p></div></div><div class="taxonomy-links">{% for x in popular_sectors %}<a href="{% url 'sector-jobs' x.slug %}"><span>{{x.name}}</span><strong>{{x.total}}</strong></a>{% empty %}<span>Sector pages populate automatically.</span>{% endfor %}</div></div><div class="taxonomy-card"><div class="section-head small"><div><h2>Browse by state</h2><p>State-specific government vacancies.</p></div></div><div class="taxonomy-links">{% for x in popular_states %}<a href="{% url 'state-jobs' x.slug %}"><span>{{x.name}}</span><strong>{{x.total}}</strong></a>{% empty %}<span>State pages populate automatically.</span>{% endfor %}</div></div><div class="taxonomy-card"><div class="section-head small"><div><h2>Top recruiting organizations</h2><p>Follow recurring official recruitment authorities.</p></div></div><div class="taxonomy-links">{% for x in popular_organizations %}<a href="{% url 'organization-jobs' x.slug %}"><span>{{x.name}}</span><strong>{{x.total}}</strong></a>{% empty %}<span>Organization pages populate automatically.</span>{% endfor %}</div></div></div></div></section>
+
+<section class="section compact"><div class="container">
+  <div class="section-head"><div><h2>{{T.latest_jobs}}</h2><p>New official notices published by the background pipeline.</p></div><a class="link" href="{% url 'jobs' %}">View all →</a></div>
+  <div class="panel"><div class="panelhead"><div><h3>Fresh notifications</h3><small>Sorted by publication time</small></div><span class="badge green">● Verified</span></div>
+    {% for j in latest %}<a class="jobrow" href="{{j.get_absolute_url}}"><div class="orgicon">{{j.organization|slice:':2'|upper}}</div><div><h3>{{j.title}}</h3><p>{{j.organization}} • {{j.qualification_group|default:'Qualification in notice'}} • {{j.sector}}</p></div><div class="jobmetric"><span>{{T.vacancies}}</span><strong>{{j.vacancies|default:'—'}}</strong></div><div class="jobmetric"><span>{{T.last_date}}</span><strong>{{j.application_end_date|date:'d M Y'|default:'Check notice'}}</strong></div></a>{% empty %}<div class="empty empty-pad">No published jobs yet. Run the initial source scan after deployment.</div>{% endfor %}
+  </div>
+</div></section>
+
+<section class="section compact"><div class="container">
+  <div class="section-head"><div><h2>{{T.closing_soon}}</h2><p>Deadlines automatically move higher as the closing date approaches.</p></div><a class="link" href="{% url 'jobs' %}?closing=1">See all deadlines →</a></div>
+  <div class="closinggrid">{% for j in closing %}<article class="closingcard"><div class="closingtop"><span class="source-pill">{{T.verified}}</span><strong>{% if j.days_left == 0 %}Today{% else %}{{j.days_left}} day{{j.days_left|pluralize}} left{% endif %}</strong></div><h3><a href="{{j.get_absolute_url}}">{{j.title}}</a></h3><p>{{j.organization}}</p><div class="datebar"><span>{{T.last_date}}</span><strong>{{j.application_end_date|date:'d M Y'}}</strong></div></article>{% empty %}<div class="empty">No jobs closing in the next 10 days.</div>{% endfor %}</div>
+</div></section>
+
+<div class="container split-section">
+  <section class="panel dashboard-panel"><div class="panelhead"><div><h3>{{T.recently_updated}}</h3><small>Deadline, vacancy or eligibility changes detected</small></div><a class="link" href="{% url 'jobs' %}?updated=1">All updates</a></div>{% for j in updated_jobs %}<a class="update-row" href="{{j.get_absolute_url}}"><div><strong>{{j.title}}</strong><small>Version {{j.change_version}} • verified {{j.verified_at|timesince}} ago</small></div><span>Updated →</span></a>{% empty %}<div class="empty-pad">No changed notices yet.</div>{% endfor %}</section>
+  <section class="panel dashboard-panel"><div class="panelhead"><div><h3>Upcoming dates</h3><small>Next 30 days</small></div><a class="link" href="{% url 'exam-calendar' %}">Calendar</a></div>{% for e in upcoming_events %}<a class="update-row" href="{% if e.job %}{{e.job.get_absolute_url}}{% else %}{{e.official_url}}{% endif %}"><div><strong>{{e.title}}</strong><small>{{e.get_event_type_display}}</small></div><span>{{e.event_date|date:'d M'}}</span></a>{% empty %}<div class="empty-pad">No upcoming structured dates yet.</div>{% endfor %}</section>
+</div>
+
+<section class="section compact"><div class="container discovery-grid">
+  <div class="trend-card"><div class="section-head small"><div><h2>{{T.trending}}</h2><p>Popular searches across the portal.</p></div></div><div class="trend-tags">{% for item in trending %}<a href="{% url 'jobs' %}?q={{item.query|urlencode}}">{{item.query}} <span>{{item.count}}</span></a>{% empty %}<span>No search trends yet.</span>{% endfor %}</div></div>
+  <div class="alert-card"><div><span class="section-kicker">Free alerts</span><h2>{{T.create_alert}}</h2><p>Get matching government jobs and deadline reminders by email.</p></div><form method="post" action="{% url 'public-alert-signup' %}" class="alert-inline">{% csrf_token %}<input type="hidden" name="next" value="{{request.path}}"><input class="honeypot" name="company" tabindex="-1" autocomplete="off"><input class="control" type="email" name="email" required placeholder="your@email.com"><select class="control" name="frequency"><option value="daily">Daily digest</option><option value="instant">Instant matches</option></select><input class="control" name="qualifications_text" placeholder="Graduate, Engineering"><button class="btn btn-primary">Create alert</button></form></div>
+</div></section>
+{% endblock %}

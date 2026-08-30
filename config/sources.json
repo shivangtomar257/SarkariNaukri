@@ -1,0 +1,166 @@
+[
+  {
+    "name": "UPSC Recruitment Advertisements",
+    "source_type": "official",
+    "base_url": "https://upsc.gov.in",
+    "entry_url": "https://upsc.gov.in/recruitment/recruitment-advertisement",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 80,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official authority. Automated fetching is still subject to the site's current robots/copyright terms.",
+    "extra_allowed_domains": [
+      "upsconline.nic.in",
+      "upsconline.gov.in"
+    ]
+  },
+  {
+    "name": "UPSC Active Examinations",
+    "source_type": "official",
+    "base_url": "https://upsc.gov.in",
+    "entry_url": "https://upsc.gov.in/examinations/active-examinations",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 80,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official examination notices, admit-card/result discovery.",
+    "extra_allowed_domains": [
+      "upsconline.nic.in",
+      "upsconline.gov.in"
+    ]
+  },
+  {
+    "name": "SSC",
+    "source_type": "official",
+    "base_url": "https://ssc.gov.in",
+    "entry_url": "https://ssc.gov.in",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 100,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Generic link discovery from the official SSC entry page; adjust adapter if the site changes.",
+    "extra_allowed_domains": []
+  },
+  {
+    "name": "ISRO Current Opportunities",
+    "source_type": "official",
+    "base_url": "https://www.isro.gov.in",
+    "entry_url": "https://www.isro.gov.in/ISRO_EN/ViewAllOpportunities.html",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 120,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official ISRO all current opportunities listing.",
+    "extra_allowed_domains": []
+  },
+  {
+    "name": "DRDO Vacancies",
+    "source_type": "official",
+    "base_url": "https://www.drdo.gov.in",
+    "entry_url": "https://www.drdo.gov.in/drdo/offerings/vacancies",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 120,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official DRDO vacancies portal.",
+    "extra_allowed_domains": []
+  },
+  {
+    "name": "RRB Chandigarh Employment Notices",
+    "source_type": "official",
+    "base_url": "https://www.rrbcdg.gov.in",
+    "entry_url": "https://www.rrbcdg.gov.in/employment-notices.php",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 120,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official RRB Chandigarh centralised employment notices.",
+    "extra_allowed_domains": [
+      "rrbapply.gov.in"
+    ]
+  },
+  {
+    "name": "RBI Opportunities - Results",
+    "source_type": "official",
+    "base_url": "https://opportunities.rbi.org.in",
+    "entry_url": "https://opportunities.rbi.org.in/scripts/resultsnew.aspx",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 360,
+    "max_links_per_scan": 80,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official RBI recruitment results.",
+    "extra_allowed_domains": []
+  },
+  {
+    "name": "RBI Opportunities - Vacancies",
+    "source_type": "official",
+    "base_url": "https://opportunities.rbi.org.in",
+    "entry_url": "https://opportunities.rbi.org.in/Scripts/Vacancies.aspx",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 100,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official RBI recruitment vacancies.",
+    "extra_allowed_domains": []
+  },
+  {
+    "name": "IBPS Recruitment",
+    "source_type": "official",
+    "base_url": "https://www.ibps.in",
+    "entry_url": "https://www.ibps.in/index.php/recruitment/",
+    "enabled": true,
+    "trust_score": 1.0,
+    "crawl_interval_minutes": 240,
+    "max_links_per_scan": 100,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+source-verification)",
+    "notes": "Official IBPS recruitment listing.",
+    "extra_allowed_domains": [
+      "ibpsreg.ibps.in"
+    ]
+  },
+  {
+    "name": "FreeJobAlert discovery",
+    "source_type": "discovery",
+    "base_url": "https://www.freejobalert.com",
+    "entry_url": "https://www.freejobalert.com",
+    "enabled": false,
+    "trust_score": 0.6,
+    "crawl_interval_minutes": 360,
+    "max_links_per_scan": 40,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+discovery-only; no-republication)",
+    "notes": "Optional discovery signal only. Never use this source as publication evidence or store/rewrite its article body. Enable only after confirming current terms and robots rules.",
+    "extra_allowed_domains": []
+  },
+  {
+    "name": "IndGovtJobs discovery",
+    "source_type": "discovery",
+    "base_url": "https://www.indgovtjobs.in",
+    "entry_url": "https://www.indgovtjobs.in",
+    "enabled": false,
+    "trust_score": 0.6,
+    "crawl_interval_minutes": 360,
+    "max_links_per_scan": 40,
+    "allow_store_body": false,
+    "user_agent": "SarkariNaukriBot/1.0 (+discovery-only; no-republication)",
+    "notes": "Optional discovery signal only. Official-source resolution is mandatory before publishing.",
+    "extra_allowed_domains": []
+  }
+]

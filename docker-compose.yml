@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: sarkari
+      POSTGRES_USER: sarkari
+      POSTGRES_PASSWORD: sarkari
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U sarkari -d sarkari"], interval: 5s, timeout: 5s, retries: 20}
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server","--appendonly","yes"]
+    volumes: ["redisdata:/data"]
+  web:
+    build: .
+    env_file: .env
+    ports: ["8000:8000"]
+    depends_on: {db: {condition: service_healthy}, redis: {condition: service_started}}
+  worker:
+    build: .
+    env_file: .env
+    command: ["celery","-A","sarkarinaukri","worker","-l","INFO","--concurrency=4"]
+    depends_on: [db,redis]
+  beat:
+    build: .
+    env_file: .env
+    command: ["celery","-A","sarkarinaukri","beat","-l","INFO"]
+    depends_on: [db,redis]
+volumes: {pgdata: {}, redisdata: {}}

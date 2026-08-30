@@ -1,0 +1,31 @@
+{% extends 'portal/base.html' %}
+{% block title %}{% if landing_title %}{{landing_title}}{% else %}Latest Government Jobs{% endif %} — SarkariNaukri{% endblock %}
+{% block description %}{% if landing_description %}{{landing_description}}{% else %}Browse verified Indian government jobs by qualification, sector, state and deadline.{% endif %}{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{SITE_URL}}{{request.path}}">{% endblock %}
+{% block content %}
+<section class="pagehero"><div class="container"><div class="breadcrumb"><a href="{% url 'home' %}">Home</a> / Jobs</div><h1>{% if landing_title %}{{landing_title}}{% else %}{{T.latest_jobs}}{% endif %}</h1><p>{% if landing_description %}{{landing_description}}{% else %}Search official-source verified active notifications and sort them the way you need.{% endif %}</p></div></section>
+<div class="container filterbar advanced-filterbar">
+  <form class="filters advanced" role="search" data-autocomplete-form>
+    <div class="autocomplete-wrap"><input class="control" name="q" value="{{q}}" autocomplete="off" data-autocomplete placeholder="Search post, exam, department"><div class="autocomplete-list" data-autocomplete-list hidden></div></div>
+    <select class="control" name="qualification"><option value="">All qualifications</option>{% for x in QUALIFICATIONS %}<option {% if x == qual %}selected{% endif %}>{{x}}</option>{% endfor %}</select>
+    <select class="control" name="sector"><option value="">All sectors</option>{% for x in sectors %}<option {% if x == sector %}selected{% endif %}>{{x}}</option>{% endfor %}</select>
+    <select class="control" name="state"><option value="">All states</option>{% for x in states %}<option {% if x == state %}selected{% endif %}>{{x}}</option>{% endfor %}</select>
+    <select class="control" name="sort"><option value="latest" {% if sort == 'latest' %}selected{% endif %}>Newest first</option><option value="deadline" {% if sort == 'deadline' %}selected{% endif %}>Closing first</option><option value="vacancies" {% if sort == 'vacancies' %}selected{% endif %}>Most vacancies</option></select>
+    <button class="btn btn-primary">Filter</button>
+    <details class="more-filters"><summary>More eligibility filters</summary><div class="more-filter-grid"><label>Age<input class="control" type="number" name="age" min="14" max="80" value="{{age}}" placeholder="24"></label><label>Experience (months)<input class="control" type="number" name="experience" min="0" value="{{experience}}" placeholder="12"></label><label>Discipline / branch<input class="control" name="discipline" value="{{discipline}}" placeholder="Computer Science"></label><label>Category<select class="control" name="category"><option value="">Any</option><option {% if category == 'General' %}selected{% endif %}>General</option><option {% if category == 'EWS' %}selected{% endif %}>EWS</option><option {% if category == 'OBC' %}selected{% endif %}>OBC</option><option {% if category == 'SC' %}selected{% endif %}>SC</option><option {% if category == 'ST' %}selected{% endif %}>ST</option><option {% if category == 'PwBD' %}selected{% endif %}>PwBD</option></select></label><label>Gender (when explicitly restricted)<select class="control" name="gender"><option value="">Any</option><option {% if gender == 'Male' %}selected{% endif %}>Male</option><option {% if gender == 'Female' %}selected{% endif %}>Female</option><option {% if gender == 'Other' %}selected{% endif %}>Other</option></select></label></div><small>Age filters use the base detected age range. Category relaxation and detailed equivalence are checked more accurately on each job's “Can I Apply?” panel.</small></details>
+  </form>
+  <div class="filter-shortcuts"><a href="{% url 'jobs' %}?closing=1">⏳ Closing in 14 days</a><a href="{% url 'jobs' %}?updated=1">↻ Recently updated</a><a href="{% url 'exam-calendar' %}">📅 Exam calendar</a>{% if request.user.is_authenticated %}<a href="{% url 'account-dashboard' %}">★ Saved jobs</a>{% endif %}</div>
+</div>
+<section class="section compact"><div class="container">
+  <div class="listingtop"><div><h2>{{page_obj.paginator.count}} matching job{{page_obj.paginator.count|pluralize}}</h2><span>Verified official-source records</span></div><div class="verification-legend"><span class="source-pill">✓ Source checked</span><span>Pages keep their verification timestamp and update history.</span></div></div>
+  {% for j in jobs %}
+  <article class="listcard {% if j.is_closing_soon %}closing-highlight{% endif %}">
+    <div class="orgicon">{{j.organization|slice:':2'|upper}}</div>
+    <div class="list-main"><div class="list-title-line"><h3><a href="{{j.get_absolute_url}}">{{j.title}}</a></h3>{% if j.change_version > 1 %}<span class="badge blue">Updated v{{j.change_version}}</span>{% endif %}</div><p>{{j.organization}}{% if j.advertisement_no %} • {{j.advertisement_no}}{% endif %}</p><div class="listtags"><span class="tag">🎓 {{j.qualification_group|default:'See notice'}}</span><span class="tag">🏛 {{j.sector}}</span>{% if j.state %}<span class="tag">📍 {{j.state}}</span>{% endif %}<span class="source-pill">{{j.verification_confidence|floatformat:0}}% source confidence</span></div><small class="verified-time">Last verified {{j.verified_at|timesince}} ago</small></div>
+    <div class="listend"><small>{{T.last_date}}</small><strong>{{j.application_end_date|date:'d M Y'|default:'See notice'}}</strong>{% if j.days_left != None and j.days_left >= 0 and j.days_left <= 7 %}<span class="deadline-chip">{{j.days_left}} day{{j.days_left|pluralize}} left</span>{% endif %}<a class="btn btn-soft" href="{{j.get_absolute_url}}">View details</a></div>
+  </article>
+  {% empty %}<div class="empty">No matching published jobs. Try removing one or more filters.</div>{% endfor %}
+
+  {% if page_obj.paginator.num_pages > 1 %}<nav class="pagination" aria-label="Job results pages">{% if page_obj.has_previous %}<a href="?{% if base_query %}{{base_query}}&{% endif %}page={{page_obj.previous_page_number}}">← Previous</a>{% endif %}<span>Page {{page_obj.number}} of {{page_obj.paginator.num_pages}}</span>{% if page_obj.has_next %}<a href="?{% if base_query %}{{base_query}}&{% endif %}page={{page_obj.next_page_number}}">Next →</a>{% endif %}</nav>{% endif %}
+</div></section>
+{% endblock %}

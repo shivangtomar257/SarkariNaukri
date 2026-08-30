@@ -1,0 +1,91 @@
+{% load static %}<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071a2f">
+  <meta name="description" content="{% block description %}SarkariNaukri — verified Indian government job notifications, admit cards, results and exam dates.{% endblock %}">
+  <meta name="robots" content="{% block robots %}index,follow,max-image-preview:large{% endblock %}">
+  <title>{% block title %}SarkariNaukri{% endblock %}</title>
+  {% block canonical %}{% endblock %}
+  <link rel="manifest" href="{% static 'portal/manifest.webmanifest' %}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{% static 'portal/icon-192.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'portal/icon-192.png' %}">
+  <link rel="stylesheet" href="{% static 'portal/styles.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="noticebar">
+  <div class="container noticebar-inner">
+    <span class="flag"><i></i><strong>Independent job information portal</strong> — official recruitment notice is always final.</span>
+    <span class="automation-badge">● Automation monitoring active</span>
+  </div>
+</div>
+<header class="header">
+  <div class="container nav">
+    <a class="brand" href="{% url 'home' %}" aria-label="SarkariNaukri home">
+      <div class="brandmark" aria-hidden="true">SN</div>
+      <span>Sarkari<em>Naukri</em></span>
+    </a>
+    <nav class="navlinks" aria-label="Primary navigation">
+      <a href="{% url 'home' %}">{{T.home}}</a>
+      <a href="{% url 'jobs' %}">{{T.latest_jobs}}</a>
+      <a href="{% url 'jobs' %}?closing=1">{{T.closing_soon}}</a>
+      <a href="{% url 'admit-cards' %}">{{T.admit_cards}}</a>
+      <a href="{% url 'results' %}">{{T.results}}</a>
+      <a href="{% url 'exam-calendar' %}">{{T.exam_calendar}}</a>
+    </nav>
+    <div class="navactions">
+      <a class="icon-btn" href="{% url 'set-language' NEXT_LANG %}?next={{request.get_full_path|urlencode}}" title="Switch language" aria-label="Switch language">{{T.language}}</a>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode">◐</button>
+      <button class="icon-btn install-button" id="install-app" type="button" hidden>{{T.install_app}}</button>
+      {% if request.user.is_authenticated %}
+        <a class="btn btn-soft" href="{% url 'account-dashboard' %}">{{T.saved_jobs}}</a>
+      {% else %}
+        <a class="btn btn-soft" href="{% url 'login' %}">{{T.login}}</a>
+      {% endif %}
+      <button class="mobile-toggle" id="mobile-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <div class="container mobile-menu-grid">
+      <a href="{% url 'home' %}">{{T.home}}</a>
+      <a href="{% url 'jobs' %}">{{T.latest_jobs}}</a>
+      <a href="{% url 'jobs' %}?closing=1">{{T.closing_soon}}</a>
+      <a href="{% url 'admit-cards' %}">{{T.admit_cards}}</a>
+      <a href="{% url 'results' %}">{{T.results}}</a>
+      <a href="{% url 'exam-calendar' %}">{{T.exam_calendar}}</a>
+      {% if request.user.is_authenticated %}<a href="{% url 'profile' %}">{{T.profile}}</a><a href="{% url 'alerts' %}">{{T.alerts}}</a>{% else %}<a href="{% url 'signup' %}">Create account</a>{% endif %}
+    </div>
+  </div>
+</header>
+
+{% if messages %}
+<div class="container message-stack" role="status">
+  {% for message in messages %}<div class="message {{message.tags}}">{{message}}</div>{% endfor %}
+</div>
+{% endif %}
+
+<main id="main-content">{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footergrid">
+      <div>
+        <a class="brand footerbrand" href="{% url 'home' %}"><div class="brandmark">SN</div><span>Sarkari<em>Naukri</em></span></a>
+        <p>Independent Indian government-job discovery portal. Not a government website and not affiliated with any recruiting authority.</p>
+        <div class="footer-badges"><span>Official-source verification</span><span>Automated change monitoring</span></div>
+      </div>
+      <div><h4>Jobs</h4><a href="{% url 'jobs' %}">{{T.latest_jobs}}</a><a href="{% url 'jobs' %}?closing=1">{{T.closing_soon}}</a><a href="{% url 'exam-calendar' %}">{{T.exam_calendar}}</a></div>
+      <div><h4>Updates</h4><a href="{% url 'admit-cards' %}">{{T.admit_cards}}</a><a href="{% url 'results' %}">{{T.results}}</a><a href="{% url 'policy' %}">{{T.source_policy}}</a></div>
+      <div><h4>{{T.account}}</h4>{% if request.user.is_authenticated %}<a href="{% url 'account-dashboard' %}">{{T.saved_jobs}}</a><a href="{% url 'profile' %}">{{T.profile}}</a><a href="{% url 'alerts' %}">{{T.alerts}}</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button" type="submit">{{T.logout}}</button></form>{% else %}<a href="{% url 'login' %}">{{T.login}}</a><a href="{% url 'signup' %}">Create account</a>{% endif %}{% if request.user.is_staff %}<a href="{% url 'ops' %}">Automation Ops</a><a href="{% url 'analytics-dashboard' %}">Analytics</a><a href="/admin/">Admin</a>{% endif %}</div>
+    </div>
+    <div class="footerbottom"><span>© {% now 'Y' %} SarkariNaukri</span><span>Always verify eligibility and payment details on the official recruitment website.</span></div>
+  </div>
+</footer>
+<script>window.SN_CONFIG={autocomplete:"{% url 'autocomplete' %}",pushSubscribe:"{% url 'webpush-subscribe' %}",vapidPublicKey:"{{VAPID_PUBLIC_KEY|escapejs}}",authenticated:{{request.user.is_authenticated|yesno:'true,false'}}};</script>
+<script defer src="{% static 'portal/app.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
